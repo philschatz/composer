@@ -161,7 +161,10 @@ sc.models.Document = function(document) {
 
   // Serialize document state to JSON
   this.toJSON = function() {
-
+    return {
+      operations: this.operations,
+      nodes: this.nodes.toJSON()
+    }
   };
 };
 

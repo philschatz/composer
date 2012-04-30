@@ -8,6 +8,7 @@ sc.views.Document = Dance.Performer.extend({
 
   },
 
+
   // Handlers
   // --------
 
