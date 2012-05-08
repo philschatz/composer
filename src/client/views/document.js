@@ -80,7 +80,9 @@ sc.views.Document = Dance.Performer.extend({
 
   moveUp: function() {
     var selection = this.model.users[composer.user].selection;
-    var first = this.model.get(_.last(selection));
+    var first = this.model.get(_.first(selection));
+
+    // 1st node (cover) stays on top
     if (first.get('prev') && first.get('prev').get('prev')) {
       this.model.execute({command:"node:move", params: { 
         user: "michael",

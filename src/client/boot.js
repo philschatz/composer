@@ -13,9 +13,9 @@ $(function() {
     {"command": "node:insert",   "params": {"user": "michael", "type": "section", "rev": 10, "attributes": {"name": "Operations"}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 11, "attributes": {"content": "The Substance Composer uses atomic operations to transform documents. This is a fundamental concept that allows collaborative editing of one document (even at the same time). The technique behind it is called Operational Transformation. Based on all recorded operations, the complete document history can be reproduced at any time. In other words. This is the best thing since sliced bread."}}},
     {"command": "user:announce", "params": {"user": "john", "color": "#4da6c7"}},
-    {"command": "node:select",   "params": {"user": "john", "nodes": ["/cover/1"], "rev": 12}},
+    // {"command": "node:select",   "params": {"user": "john", "nodes": ["/cover/1"], "rev": 12}},
     {"command": "node:select",   "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "rev": 12}},
-    {"command": "node:move",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/5", "rev": 12}}
+    // {"command": "node:move",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/5", "rev": 12}}
   ];
 
   // Executes commands in serial
@@ -25,15 +25,14 @@ $(function() {
       if (index >= commands.length) return;
       composer.execute(commands[index]);
       index += 1;
-      _.delay(next, 500);
+      _.delay(next, 1);
     }
-    _.delay(next, 500);
+    _.delay(next, 1);
   }
 
   sc.models.Document.load("example.json", function(err, doc) {
     window.composer = new Substance.Composer({model: doc, el: '#container', user: "michael"});
     composer.start();
-
     execCommands();
   });
 
