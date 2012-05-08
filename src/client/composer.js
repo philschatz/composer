@@ -5,6 +5,16 @@
 
   var Composer = Dance.Performer.extend({
     el: 'container',
+
+    events: {
+      'click .save-document': function() {
+        console.log(this.model.toJSON());
+        console.log(store);
+        store.save(this.model.toJSON());
+        return false;
+      }
+    },
+
     initialize: function(options) {
 
       // Document Model

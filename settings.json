@@ -8,7 +8,8 @@
       "underscore.js",
       "leaflet.js",
       "data.js",
-      "dance.js"
+      "dance.js",
+      "remotestorage.js"
     ],
     "production": [
       "jquery.min.js",
@@ -19,7 +20,8 @@
       "chosen.jquery.min.js",
       "underscore.js",
       "data.js",
-      "dance.js"
+      "dance.js",
+      "remotestorage.js"
     ],
     "source": [
       "composer.js",
@@ -29,6 +31,7 @@
       "views/document.js",
       "views/operations.js",
       "views/node.js",
+      "persistence.js",
       "boot.js"
     ]
   }
