@@ -1,26 +1,40 @@
-// Document persistence
+// Document Persistence Interface
 
-var DocumentStorage = function() {
+var RemoteStorageAdapter = function() {
 
-  this.save = function() {
+  this.connect = function(cb) {
+    var that = this;
+
     remoteStorage.getStorageInfo('mql@owncube.com', function(err, storageInfo) {
       var token = remoteStorage.receiveToken();
       if(token) {
-        console.log('yeah got token');
         //we can access the 'notes' category on the remoteStorage of user@example.com:
-        // var client = remoteStorage.createClient(storageInfo, 'notes', token);
-        // client.put('key', 'value', function(err) {
-        //   client.get('key', function(err, data) {
-        //     client.delete('key', function(err) {
-        //     });
-        //   });
-        // });
+        that.client = remoteStorage.createClient(storageInfo, 'substance-documents', token);
+        cb(null, token);
       } else {
         //get an access token for 'notes' by dancing OAuth with the remoteStorage of user@example.com:
-        window.location = remoteStorage.createOAuthAddress(storageInfo, ['notes'], window.location.href);
+        window.location = remoteStorage.createOAuthAddress(storageInfo, ['substance-documents'], window.location.href);
       }
     });
-  }
+  };
 
+  this.save = function(id, document, cb) {
+    this.client.put(id, JSON.stringify(document), function(err) {
+      cb(err);
+    });
+  };
+
+  this.get = function(id, rev, cb) {
+    client.get(id, function(err, data) {
+      cb(err, data);
+    });
+  };
+
+  this.delete = function(id, cb) {
+    client.delete(id, function(err) {
+      cb(err);
+    });
+  };
 };
-window.store = new DocumentStorage();
+
+window.store = new RemoteStorageAdapter();
