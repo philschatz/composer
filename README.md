@@ -12,7 +12,7 @@ And we've proposed a solution:
 The Substance Composer
 =========
 
-The Substance Composer is a foundation for building your own editor tailored for you particular usecase. You can extend basic content types such as Text, Sections and Images with custom types such as Maps, Formulas, or pre-structured types such as an Event content type that allows you entering name, date, organizer etc. You can add whatever you can imagine. The sky is the limit. But here comes the bummer: You need to do it yourself. Our mission is to make it very easy for you. So we create an infrastructure for basic operations such as inserting, moving and deleting nodes. 
+The Substance Composer is a foundation for building your own editor tailored for you particular usecase. You can extend basic content types such as Text, Sections and Images with custom types such as Maps, Formulas, or pre-structured types such as an Event content type that allows you entering name, date, organizer etc. You can add whatever you can imagine, the sky is the limit. But here comes the bummer: You need to do it yourself. Our mission is to make it very easy for you, by creating an infrastructure for basic operations such as inserting, moving and deleting nodes, and a generic UI for dealing with patches and comments.
 
 ![Composer](http://f.cl.ly/items/2j0g3c0S0E290p3d3E2E/Screen%20Shot%202012-05-08%20at%2010.48.09%20PM.png)
 
