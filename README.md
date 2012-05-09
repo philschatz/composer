@@ -8,6 +8,7 @@ And we've proposed a solution:
 
 > Provide an easy way for communities to build their own editor
 
+
 The Substance Composer
 =========
 
@@ -51,8 +52,9 @@ User API
 
 Announce a new author collaborating on the document.
 
-    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}}
-
+```js
+{"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}}
+```
 
 Node API
 ---------------------
@@ -63,44 +65,48 @@ Commands for inserting, updating, moving and deleting content nodes.
 
 Insert a new node.
 
-    {
-      "command": "node:insert", 
-      "params": {
-        "user": "michael",
-        "type": "text",
-        "rev": 3,
-        "attributes": {"content": "Text goes here."}
-      }
-    }
-
+```js
+{
+  "command": "node:insert", 
+  "params": {
+    "user": "michael",
+    "type": "text",
+    "rev": 3,
+    "attributes": {"content": "Text goes here."}
+  }
+}
+```
 
 ### node:move
 
 Move node(s). They are inserted after a specified target node.
 
-    {
-      "command": "node:insert", 
-      "params": {
-        "user": "michael",
-        "nodes": ["/section/2", "/text/3"],
-        "target": "/text/5"
-        "rev": 12
-      }
-    }
+```js
+{
+  "command": "node:insert", 
+  "params": {
+    "user": "michael",
+    "nodes": ["/section/2", "/text/3"],
+    "target": "/text/5"
+    "rev": 12
+  }
+}
+```
 
 ### node:select
 
 Make a new node selection.
 
-
-    {
-      "command": "node:select",
-      "params": {
-        "user": "michael",
-        "nodes": ["/section/2", "/text/3"],
-        "rev": 12
-      }
-    }
+```js
+{
+  "command": "node:select",
+  "params": {
+    "user": "michael",
+    "nodes": ["/section/2", "/text/3"],
+    "rev": 12
+  }
+}
+```
 
 ### node:update
 
