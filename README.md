@@ -21,6 +21,8 @@ Collaboration
 
 Since collaboration is more imporantant than ever before to create high quality content we've added the concept of patches to turn every readers into a potential collaborator.
 
+![Patches](http://f.cl.ly/items/1q2w2W0F0Q06043Y3346/Screen%20Shot%202012-05-08%20at%2011.08.23%20PM.png)
+
 The Substance Composer uses operations to transform documents. By keeping track of atomic document operations, the complete history can be replayed and allows users to go back and forth in time. You can either use the web-based editor for manipulating documents, or do it programmatically using the API.
 
 Why should we consider content as data?
