@@ -1,29 +1,123 @@
-Substance Composer
+Hi! We are the team of [Substance](http://substance.io), and we're passionate about making web-based content composition easy. We believe that [Content is Data](http://www.slideshare.net/_mql/substanceio-content-is-data) and should be separated from presentation. Authors want to create meaningful content in the first place, they don't want to spend time with aligning text, choosing fonts and resizing images. 
+
+Also we've made a claim:
+
+> Building an editor for everyone is impossible
+
+And we've proposed a solution:
+
+> Provide an easy way for communities to build their own editor
+
+The Substance Composer
+=========
+
+The Substance Composer is a foundation for building your own editor tailored for you particular usecase. You can extend basic content types such as Text, Sections and Images with custom types such as Maps, Formulas, or pre-structured types such as an Event content type that allows you entering project details. Basically whatever you can imagine. The sky is the limit. You have to do it yourself though. It's our mission to make it easy for you. So we create an infrastructure for basic operations such as inserting, moving and deleting nodes. 
+
+![Composer](http://f.cl.ly/items/2j0g3c0S0E290p3d3E2E/Screen%20Shot%202012-05-08%20at%2010.48.09%20PM.png)
+
+Collaboration
+=========
+
+Since collaboration is more imporantant than ever before to create high quality content we've added the concept of patches to turn every readers into a potential collaborator.
+
+The Substance Composer uses operations to transform documents. By keeping track of atomic document operations, the complete history can be replayed and allows users to go back and forth in time. You can either use the web-based editor for manipulating documents, or do it programmatically using the API.
+
+Why should we consider content as data?
+=========
+
+![Content is data](http://f.cl.ly/items/2o2f2c3x0C0L392H2w0c/Screen%20Shot%202012-05-08%20at%2010.55.10%20PM.png)
+
+Extensions
+=========
+
+You can implement your own content types. We'll provide a tutorial once the editor stable enough.
+
+![Composer](http://f.cl.ly/items/0w1D1u203D120j1R2938/Screen%20Shot%202012-05-08%20at%2010.52.02%20PM.png)
+
+
+API
 =====================
 
-The Substance Composer is an open source effort dedicated to the development of a truly flexible editing component to be used by applications such as Substance.io for collaborative content composition. It uses operations to transform documents. By keeping track of atomic document operations, we can replay the complete history and go back and forth in time.
+Document Manipulation
+---------------------
+
+Documents are manipulated using commands. Commands are represented as JSON.
 
 
-API Appetizer
-=====================
+User API
+---------------------
 
-```js
-var op1 = {"_rev": 1, "command": "insert-node", params: {"type": "section", after: "/text/1"}}
+### user:announce
 
-composer.document.rev // => 1
-composer.execute(op1);
-composer.document.rev // => 2
+Announce a new author collaborating on the document.
 
-var op2 = {"command": "insert-comment", params: {
-  referenced_nodes: ["/text/1", "/section"],
-  "content": "There's a typo in line 5 at the first paragraph."},
-  "user": {username: "john", "name": "John Doe"}
-};
+    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}}
 
-composer.execute(op2);
-composer.document.rev // => 3
 
-var op3 = {"command": "update-node", "params": {"node": "/text/1", "operation": "ret(15) del('abc') ins('ABC') ret(241)"}}
+Node API
+---------------------
 
-composer.execute(op3); // just transforms the content of text nodes using OT.
-```
+Commands for inserting, updating, moving and deleting content nodes.
+
+### node:insert
+
+Insert a new node.
+
+    {
+      "command": "node:insert", 
+      "params": {
+        "user": "michael",
+        "type": "text",
+        "rev": 3,
+        "attributes": {"content": "Text goes here."}
+      }
+    }
+
+
+### node:move
+
+Move node(s). They are inserted after a specified target node.
+
+    {
+      "command": "node:insert", 
+      "params": {
+        "user": "michael",
+        "nodes": ["/section/2", "/text/3"],
+        "target": "/text/5"
+        "rev": 12
+      }
+    }
+
+### node:select
+
+Make a new node selection.
+
+
+    {
+      "command": "node:select",
+      "params": {
+        "user": "michael",
+        "nodes": ["/section/2", "/text/3"],
+        "rev": 12
+      }
+    }
+
+### node:update
+
+To be implemented.
+
+### node:delete
+
+To be implemented.
+
+
+Patch API
+---------------------
+
+To be implemented.
+
+Comment API
+---------------------
+
+To be implemented.
+
