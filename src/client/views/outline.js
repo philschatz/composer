@@ -1,4 +1,4 @@
-sc.views.Operations = Dance.Performer.extend({
+sc.views.Outline = Dance.Performer.extend({
 
   // Events
   // ------
@@ -11,7 +11,7 @@ sc.views.Operations = Dance.Performer.extend({
   // --------
 
   render: function () {
-    this.$el.html(_.tpl('operations', this.model));
+    this.$el.html(_.tpl('outline', this.model));
     return this;
   }
 });

@@ -89,16 +89,31 @@ h2 { font-size: 160%; padding-bottom: 15px; }
 #header {
   position: fixed;
   top: 0px;
-  height: 64px;
-  background: url("/images/header_background.png") repeat-x;
+  height: 40px;
+  background: #333;
   left: 0px;
   right: 0px;
-  line-height: 64px;
+  line-height: 40px;
   
   font-size: 25px;
   padding-left: 90px;
   color: #eee;
   z-index: 1000;
+  overflow: auto;
+
+  h1 { color: #eee; font-size: 20px; padding: 0; line-height: 40px; float: left; }
+
+  .actions {
+    float: left;
+    line-height: 40px;
+    margin-left: 20px;
+    a {
+      font-size: 16px;
+      background: #000;
+      padding: 2px 5px;
+      border: none;
+    }
+  }
 }
 
 /* body > #container
@@ -113,11 +128,3 @@ h2 { font-size: 160%; padding-bottom: 15px; }
   padding-top: 35px;
 }
 
-#sidebar {
-  overflow: auto;
-  position: fixed;
-  left: 1050px;
-  top: 80px;
-  bottom: 30px;
-  width: 500px;
-}

@@ -8,8 +8,6 @@
 
     events: {
       'click .save-document': function() {
-        console.log(this.model.toJSON());
-        console.log(store);
         store.save(this.model.toJSON());
         return false;
       }
@@ -27,10 +25,11 @@
 
       // Views
       this.views = {};
-      this.views.document = new Substance.Composer.views.Document({model: this.model});
-      this.views.operations = new Substance.Composer.views.Operations({model: this.model});
+      this.views.document = new Substance.Composer.views.Document({ model: this.model });
+
+      this.views.tools = new Substance.Composer.views.Tools({model: this.model});
       
-      this.model.on('operation:executed', this.renderOperations, this);
+      this.model.on('operation:executed', function() {}, this);
 
       // Initialize Instructor
       this.instructor = new Substance.Composer.instructors.Instructor({});
@@ -61,10 +60,11 @@
     render: function() {
       this.$el.html(_.tpl('composer'));
       this.$('#document').replaceWith(this.views.document.render().el);
+      this.renderTools();
     },
 
-    renderOperations: function() {
-      this.$('#sidebar').html(this.views.operations.render().el);
+    renderTools: function() {
+      this.$('#tools').html(this.views.tools.render().el);
     }
   },
   // Class Variables

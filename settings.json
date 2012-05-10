@@ -29,7 +29,11 @@
       "model/document.js",
       "instructors/instructor.js",
       "views/document.js",
-      "views/operations.js",
+      "views/tools.js",
+      "views/outline.js",
+      "views/history.js",
+      "views/patches.js",
+      "views/comments.js",
       "views/node.js",
       "persistence.js",
       "boot.js"
