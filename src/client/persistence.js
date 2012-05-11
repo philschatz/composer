@@ -2,22 +2,20 @@
 
 var DocumentStorageAdapter = function() {
 
-  this.save = function(id, document, cb) {
-    // this.client.put(id, JSON.stringify(document), function(err) {
-    //   cb(err);
-    // });
+  this.write = function(document, cb) {
+    _.request('PUT', '/write', document, function(err) {
+      cb(err);
+    });
   };
 
-  this.get = function(id, rev, cb) {
-    // client.get(id, function(err, data) {
-    //   cb(err, data);
-    // });
+  this.read = function(id, rev, cb) {
+    _.request('GET', '/read/' + id, function(err, data) {
+      cb(null, data);
+    });
   };
 
   this.delete = function(id, cb) {
-    // client.delete(id, function(err) {
-    //   cb(err);
-    // });
+    // TODO: implement
   };
 };
 

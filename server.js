@@ -73,7 +73,7 @@ app.get('/read/:id', function(req, res) {
 app.put('/write', function(req, res) {
   var doc = req.body;
   ds.write(doc, function(err, rev) {
-    res.send('Document successfully stored. New revision: '+rev);
+    res.send('Document successfully stored. New revision: '+doc.rev);
   });
 });
 

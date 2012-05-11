@@ -18,7 +18,6 @@ sc.views.Tools = Dance.Performer.extend({
   },
 
   render: function() {
-    console.log('rendering tools');
     this.$el.html(_.tpl('tools', this.model));
     this.$('.tool').html(this.views.tool.render().el);
     return this;

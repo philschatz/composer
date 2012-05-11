@@ -8,7 +8,9 @@
 
     events: {
       'click .save-document': function() {
-        store.save(this.model.toJSON());
+        store.write(this.model.toJSON(), function() {
+          console.log('saved');
+        });
         return false;
       }
     },
@@ -55,6 +57,12 @@
     start: function() {
       Dance.history.start();
       this.render();
+    },
+
+    read: function(id, rev) {
+      store.read(id, rev, function(err, doc) {
+        console.log('loaded:', doc);
+      });
     },
 
     render: function() {

@@ -1,11 +1,10 @@
 sc.instructors.Instructor = Dance.Instructor.extend({
   initialize: function() {
-
     // Using this.route, because order matters
-    this.route('', 'loadDocument', this.loadDocument);
+    this.route(':document', 'loadDocument', this.loadDocument);
   },
 
-  loadDocument: function() {
-    
+  loadDocument: function(id) {
+    composer.read(id);
   }
 });

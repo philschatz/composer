@@ -1,5 +1,5 @@
 {
-  "id": "/michael/john",
+  "id": "substance-composer",
   "created_at": "2012-04-10T15:17:28.946Z",
   "updated_at": "2012-04-10T15:17:28.946Z",
   "head": "/cover/1",
@@ -13,7 +13,6 @@
       "next": "/section/2",
       "prev": null
     },
-
     "/section/2": {
       "type": ["/type/node", "/type/section"],
       "name": "Plugins",
