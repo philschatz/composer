@@ -32,8 +32,9 @@ _.request = function(method, path, data) {
       url: path,
       data: data !== undefined ? JSON.stringify(data) : null,
       dataType: 'json',
-      contentType: 'application/x-www-form-urlencoded',
+      contentType: "application/json",
       success: function(res) { cb(null, res); },
       error: function(err) { cb(err); }
   });
+
 };

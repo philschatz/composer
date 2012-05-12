@@ -1,6 +1,8 @@
 sc.models.Document = function(document) {
   var that = this;
 
+  this.id = document.id;
+
   // Initialize document
   this.nodes = new Data.Graph(seed);
   this.nodes.merge(document.nodes);
@@ -176,6 +178,7 @@ sc.models.Document = function(document) {
   // Serialize document state to JSON
   this.toJSON = function() {
     return {
+      id: this.id,
       operations: this.operations,
       nodes: this.nodes.toJSON(),
       head: this.head._id,
