@@ -30,10 +30,28 @@ $(function() {
     _.delay(next, 1);
   }
 
-  sc.models.Document.load("example.json", function(err, doc) {
-    window.composer = new Substance.Composer({model: doc, el: '#container', user: "michael"});
-    composer.start();
-    execCommands();
+  // The message hub
+  var socket = io.connect('http://localhost');
+
+  socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
+    console.log('connected');
+    socket.emit('operation', 'tobi', function (data) {
+      console.log(data); // data will be 'woot'
+    });
   });
 
+  // Dispatch local operation to server
+  window.dispatch = function () {
+    console.log('dispatching..');
+  }
+
+  var doc = sc.models.Document.create();
+    window.composer = new Substance.Composer({model: doc, el: '#container', user: "michael"});
+    composer.execute({"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}});
+
+    // Update a node
+    _.delay(function() {
+      composer.execute({"command": "node:update", "params": {"node": "/text/2", "user": "michael", "properties": { "content": "All new content"} } });
+    }, 800);
+    composer.start();
 });

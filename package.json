@@ -13,7 +13,8 @@
     "express": "2.5.9",
     "less": "1.3.0",
     "request": "2.9.3",
-    "riak-js": "latest"
+    "riak-js": "latest",
+    "socket.io": "0.9.5"
   },
   "devDependencies": {
     "coffee-script": "1.2.0"

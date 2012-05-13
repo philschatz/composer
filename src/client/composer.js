@@ -9,7 +9,7 @@
     events: {
       'click .save-document': function() {
         store.write(this.model.toJSON(), function() {
-          console.log('saved');
+          console.log('saved.');
         });
         return false;
       }
@@ -51,7 +51,7 @@
 
     // Dispatch Operation
     execute: function(op) {
-      this.model.execute(op);      
+      this.model.execute(op);
     },
 
     start: function() {

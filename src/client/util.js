@@ -36,5 +36,4 @@ _.request = function(method, path, data) {
       success: function(res) { cb(null, res); },
       error: function(err) { cb(err); }
   });
-
 };

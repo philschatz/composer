@@ -26,16 +26,23 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   build: function() {
-    this.nodes = [];
+    this.nodes = {};
     this.model.each(function(node) {
-      this.nodes.push(this.createNodeView(node));
+      this.nodes[node._id] = this.createNodeView(node);
     }, this);
   },
 
+  // UI updates
+  // --------
+
   insertNode: function(node, options) {
     var view = this.createNodeView(node);
-    this.nodes.push(view);
+    this.nodes[node._id] = view;
     $(view.render().el).appendTo(this.el);
+  },
+
+  updateNode: function(node, properties) {
+    this.nodes[node].update(properties);
   },
 
   // Incoming move node operation
@@ -53,6 +60,10 @@ sc.views.Document = Dance.Performer.extend({
         .find('.handle').css('background', this.model.users[user].color);
     }, this);
   },
+
+
+  // Issue commands
+  // --------
 
   expandSelection: function() {
     var lastnode = _.last(this.model.users[composer.user].selection);
@@ -117,8 +128,8 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   render: function () {
-    _.each(this.nodes, function(node, index) {
-      $(node.render().el).appendTo(this.el);
+    this.model.each(function(node) {
+      $(this.nodes[node._id].render().el).appendTo(this.el);
     }, this);
     return this;
   },

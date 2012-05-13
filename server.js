@@ -4,7 +4,8 @@ var fs = require('fs');
 var url = require('url');
 var Data = require('./lib/data');
 var _ = require('underscore');
-var util = require('./src/server/util.js')
+var util = require('./src/server/util.js');
+var io = require('socket.io').listen(app);
 
 var DocumentStorage = require('./src/server/document_storage.js');
 var ds = new DocumentStorage();
@@ -77,10 +78,28 @@ app.put('/write', function(req, res) {
   });
 });
 
+
 // Serve startpage
 // -----------
 
 app.get('/', serveStartpage);
+
+
+// Real time server
+// ===========
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+
+  // New operation
+  // -----------
+
+  socket.on('operation', function (name, cb) {
+    cb('confirmed.');
+  });
+
+});
+
 
 // Start server
 // -----------

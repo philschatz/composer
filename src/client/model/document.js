@@ -29,8 +29,8 @@ sc.models.Document = function(document) {
 
     // Process update command
     update: function(options) {
-      var node = {};
-      that.trigger('node:update', node);
+      that.nodes.get(options.node).set(options.properties);
+      that.trigger('node:update', options.node);
     },
 
     // Update selection
@@ -161,12 +161,12 @@ sc.models.Document = function(document) {
 
   this.logOperation = function(op) {
     this.operations.push(op);
-    this.trigger('operation:executed');
   };
 
-  this.execute = function(op) {
+  this.execute = function(op, silent) {
     var command = op.command.split(':');
     this[command[0]][command[1]](op.params);
+    if (!silent) this.trigger('operation:executed');
     this.logOperation(op);
   };
 
@@ -187,12 +187,32 @@ sc.models.Document = function(document) {
   };
 };
 
-
-// Load a document
-sc.models.Document.load = function(url, cb) {
-  $.getJSON(url, function(data) {
-    cb(null, data);
-  });
+// Factory method creating an empty document
+sc.models.Document.create = function(id) {
+  return {
+    "id": id || Data.uuid(),
+    "created_at": "2012-04-10T15:17:28.946Z",
+    "updated_at": "2012-04-10T15:17:28.946Z",
+    "head": "/cover/1",
+    "tail": "/section/2",
+    "rev": 3,
+    "nodes": {
+      "/cover/1": {
+        "type": ["/type/node", "/type/cover"],
+        "title": "The Substance Composer",
+        "abstract": "The Substance Composer is flexible editing component to be used by applications such as Substance.io for collaborative content composition.",
+        "next": "/text/2",
+        "prev": null
+      },
+      "/text/2": {
+        "type": ["/type/node", "/type/text"],
+        "content": "Start typing today.",
+        "prev": "/cover/1",
+        "next": null
+      }
+    }
+  };
 };
+
 
 _.extend(sc.models.Document.prototype, _.Events);
