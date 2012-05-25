@@ -1,4 +1,8 @@
-sc.models.Document = function(document) {
+if (typeof exports !== 'undefined') {
+  _ = require('underscore');
+}
+
+var Document = function(document) {
   var that = this;
 
   this.id = document.id;
@@ -137,9 +141,12 @@ sc.models.Document = function(document) {
   // --------
 
   this.user = {
-    // TODO: dynamic color assignment for users
-    announce: function(options) {
-      that.users[options.user] = { username: options.user, color: options.color || "red"};
+    enter: function(user) {
+      this.users[user.id] = { id: user.id, username: user.username, color: user.color || "red"};
+    },
+
+    leave: function(id) {
+      delete this.users[id];
     }
   };
 
@@ -170,6 +177,10 @@ sc.models.Document = function(document) {
     this.logOperation(op);
   };
 
+  this.announceUser = function() {
+
+  };
+
   // Get a specific node
   this.get = function(id) {
     return this.nodes.get(id);
@@ -187,32 +198,12 @@ sc.models.Document = function(document) {
   };
 };
 
-// Factory method creating an empty document
-sc.models.Document.create = function(id) {
-  return {
-    "id": id || Data.uuid(),
-    "created_at": "2012-04-10T15:17:28.946Z",
-    "updated_at": "2012-04-10T15:17:28.946Z",
-    "head": "/cover/1",
-    "tail": "/section/2",
-    "rev": 3,
-    "nodes": {
-      "/cover/1": {
-        "type": ["/type/node", "/type/cover"],
-        "title": "The Substance Composer",
-        "abstract": "The Substance Composer is flexible editing component to be used by applications such as Substance.io for collaborative content composition.",
-        "next": "/text/2",
-        "prev": null
-      },
-      "/text/2": {
-        "type": ["/type/node", "/type/text"],
-        "content": "Start typing today.",
-        "prev": "/cover/1",
-        "next": null
-      }
-    }
-  };
-};
 
+_.extend(Document.prototype, _.Events);
 
-_.extend(sc.models.Document.prototype, _.Events);
+// Export for browser
+if (typeof exports !== 'undefined') {
+  module.exports = Document;
+} else {
+  sc.models.Document = Document;  
+}

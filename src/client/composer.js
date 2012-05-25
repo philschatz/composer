@@ -16,25 +16,7 @@
     },
 
     initialize: function(options) {
-
-      // Document Model
-      this.model = new Composer.models.Document(this.model);
-
-      this.user = options.user;
-
-      // Possible modes: edit, view, patch, apply-patch
-      this.mode = "edit";
-
-      // Views
-      this.views = {};
-      this.views.document = new Substance.Composer.views.Document({ model: this.model });
-
-      this.views.tools = new Substance.Composer.views.Tools({model: this.model});
-      
-      this.model.on('operation:executed', function() {}, this);
-
-      // Initialize Instructor
-      this.instructor = new Substance.Composer.instructors.Instructor({});
+      // this.user = options.user || this.newUser();
 
       // Selection shortcuts
       key('shift+down', _.bind(function() { this.views.document.expandSelection(); return false; }, this));
@@ -47,6 +29,29 @@
 
       // Node insertion shortcuts
       key('alt+t', _.bind(function() { console.log('insert text node'); }, this));
+
+      // Initialize Instructor
+      this.instructor = new Substance.Composer.instructors.Instructor({});
+    },
+    
+    // Build a document
+    build: function(doc) {
+      // Document Model
+      this.model = new Composer.models.Document(doc.document);
+
+      // All active sessions (=users on that document)
+      this.sessions = doc.sessions;
+
+      // Possible modes: edit, view, patch, apply-patch
+      this.mode = "edit";
+
+      // Views
+      this.views = {};
+      this.views.document = new Substance.Composer.views.Document({ model: this.model });
+      this.views.tools = new Substance.Composer.views.Tools({model: this.model});
+      
+      this.model.on('operation:executed', function() {}, this);
+      this.renderDoc();
     },
 
     // Dispatch Operation
@@ -60,18 +65,30 @@
     },
 
     read: function(id, rev) {
-      store.read(id, rev, function(err, doc) {
+      store.open(id, rev, function(err, doc) {
         console.log('loaded:', doc);
       });
     },
 
-    render: function() {
-      this.$el.html(_.tpl('composer'));
-      this.$('#document').replaceWith(this.views.document.render().el);
-      this.renderTools();
+    newDocument: function() {
+      var that = this;
+      store.create(function(err, doc) {
+        // console.log('yay', doc);
+        that.build(doc);
+      });
     },
 
-    renderTools: function() {
+    // Store document on the server
+    save: function() {
+
+    },
+
+    render: function() {
+      this.$el.html(_.tpl('composer'));
+    },
+
+    renderDoc: function() {
+      this.$('#document').replaceWith(this.views.document.render().el);
       this.$('#tools').html(this.views.tools.render().el);
     }
   },

@@ -15,7 +15,7 @@ _.extend(DocumentStorage.prototype, {
     });
   },
 
-  read: function(id, cb) {
+  read: function(id, rev, cb) {
     db.get('documents', id, function(err, doc) {
       cb(err, doc);
     });

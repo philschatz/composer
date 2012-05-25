@@ -6,7 +6,7 @@ sc.instructors.Instructor = Dance.Instructor.extend({
   },
 
   newDocument: function() {
-    console.log('new doc');
+    composer.newDocument();
   },
 
   loadDocument: function(id) {

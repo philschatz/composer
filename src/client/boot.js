@@ -1,7 +1,7 @@
 $(function() {
 
   var commands = [
-    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}},    
+    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 3, "attributes": {"content": "It's literally impossible to build an editor that can be used across different disciplines. Scientists, writers and journalists all have different needs. That's why Substance just provides the core infrastructure, and introduces Content Types that can be developed individually by the community, tailored to their specific needs."}}},
     // {"command": "node:insert",   "params": {"user": "michael", "type": "map", "rev": 3, "attributes": {"content": "Hey! I'm a map."}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "section", "rev": 4, "attributes": {"name": "Structured Composition"}}},
@@ -30,28 +30,13 @@ $(function() {
     _.delay(next, 1);
   }
 
-  // The message hub
-  var socket = io.connect('http://localhost');
+  // var doc = sc.models.Document.create();
+  window.composer = new Substance.Composer({el: '#container'});
 
-  socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
-    console.log('connected');
-    socket.emit('operation', 'tobi', function (data) {
-      console.log(data); // data will be 'woot'
-    });
-  });
-
-  // Dispatch local operation to server
-  window.dispatch = function () {
-    console.log('dispatching..');
-  }
-
-  var doc = sc.models.Document.create();
-    window.composer = new Substance.Composer({model: doc, el: '#container', user: "michael"});
-    composer.execute({"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}});
-
-    // Update a node
-    _.delay(function() {
-      composer.execute({"command": "node:update", "params": {"node": "/text/2", "user": "michael", "properties": { "content": "All new content"} } });
-    }, 800);
-    composer.start();
+  // composer.execute({"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}});
+  // Update a node
+  // _.delay(function() {
+  //   composer.execute({"command": "node:update", "params": {"node": "/text/2", "user": "michael", "properties": { "content": "All new content"} } });
+  // }, 800);
+  composer.start();
 });
