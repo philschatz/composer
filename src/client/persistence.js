@@ -58,8 +58,8 @@ var SocketIOAdapter = function() {
   // Merge in operations from other clients
   // -----------
 
-  function receiveUpdate() {
-
+  function receiveUpdate(op) {
+    
   }
 
   // Update document incrementally using operations

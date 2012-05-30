@@ -73,7 +73,6 @@
     newDocument: function() {
       var that = this;
       store.create(function(err, doc) {
-        // console.log('yay', doc);
         that.build(doc);
       });
     },

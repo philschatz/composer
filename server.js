@@ -1,21 +1,21 @@
-var express = require('express');
-var app = express.createServer();
-var fs = require('fs');
-var url = require('url');
-var Data = require('./lib/data');
-var _ = require('underscore');
-var util = require('./src/server/util.js');
-var Document = require('./src/shared/model/document.js');
-var io = require('socket.io').listen(app);
+var express  = require('express'),
+    app      = express.createServer(),
+    fs       = require('fs'),
+    url      = require('url'),
+    Data     = require('./lib/data'),
+    _        = require('underscore'),
+    util     = require('./src/server/util.js'),
+    Document = require('./src/shared/model/document.js'),
+    ds       = new (require('./src/server/document_storage.js'))(),
+    dm       = new (require('./src/server/document_manager.js'))(app);
 
-var DocumentStorage = require('./src/server/document_storage.js');
-var ds = new DocumentStorage();
 
 // App config
 // ===========
 
 global.config = JSON.parse(fs.readFileSync(__dirname+ '/config.json', 'utf-8'));
 global.example = fs.readFileSync(__dirname+ '/data/example.json', 'utf-8');
+
 
 // Express.js Configuration
 // -----------
@@ -90,131 +90,15 @@ app.post('/write', function(req, res) {
   });
 });
 
-
 // Serve startpage
 // -----------
 
 app.get('/', serveStartpage);
 
 
-// Active sessions
-var sessions = {};
-
-// Open documents
-var documents = {};
-
-function registerSession(id) {
-  sessions[id] = {
-    id: id,
-    username: id,
-    color: "#82AA15"
-  };
-}
-
-function removeSession(id) {
-  delete sessions[id];
-}
-
-// Creates a new active document session
-function registerDocument(document) {
-  console.log('serving document: ')
-}
-
-// Remove document session (as soon as all users have left)
-function removeDocument() {
-
-}
-
-
-
-// Real time server
-// ===========
-
-io.sockets.on('connection', function (socket) {
-  console.log('new user arrived');
-  console.log(socket.id);
-
-  // Request a document
-  // -----------
-
-  socket.on('open:document', function (document, rev, cb) {
-    console.log('new document requested.', document, rev);
-
-    // Try to fetch that document
-    ds.read(document, rev, function(err, document) {
-      console.log('meh');
-    });
-
-    socket.set('document', document, function () {
-      // socket.emit('ready');
-      console.log('document set');
-      cb(null, {id: "your-doc"});
-    });
-    // socket.on('set nickname', function (name) {
-
-    // });
-    // ds.read(req.params.id, function(err, data) {
-    //   res.send(data);
-    // });
-  });
-
-
-  // Create a new document
-  // -----------
-
-  socket.on('create:document', function (cb) {
-    var doc = {
-      "id": Data.uuid(),
-      "created_at": "2012-04-10T15:17:28.946Z",
-      "updated_at": "2012-04-10T15:17:28.946Z",
-      "head": "/cover/1",
-      "tail": "/section/2",
-      "rev": 3,
-      "nodes": {
-        "/cover/1": {
-          "type": ["/type/node", "/type/cover"],
-          "title": "A new document",
-          "abstract": "The Substance Composer is flexible editing component to be used by applications such as Substance.io for collaborative content composition.",
-          "next": "/section/2",
-          "prev": null
-        },
-        "/section/2": {
-          "type": ["/type/node", "/type/section"],
-          "name": "Plugins",
-          "prev": "/cover/1",
-          "next": null
-        }
-      }
-    };
-
-    // Create a new doc
-    // Confirm document creation
-    cb(null, { document: doc, sessions: sessions });
-  });
-
-
-  // New incoming operation
-  // Needs to be broadcasted to other clients
-  // -----------
-
-  socket.on('operation', function (operation, cb) {
-    console.log(operation);
-    console.log(socket);
-    cb(null, 'confirmed.');
-  });
-
-  // A user says good bye
-  // -----------
-
-  socket.on('disconnect', function () {
-    console.log('user has been disconnected');
-    // io.sockets.emit('user disconnected');
-  });
-});
-
 // Start server
 // -----------
 
 app.listen(config['server_port'], config['server_host'], function (err) {
-  console.log('READY: Substance is listening http://'+config['server_host']+':'+config['server_port']);
+  console.log('Substance Library is listening at http://'+config['server_host']+':'+config['server_port']);
 });

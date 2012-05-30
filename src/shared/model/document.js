@@ -1,14 +1,20 @@
 if (typeof exports !== 'undefined') {
-  _ = require('underscore');
+  var Data = require ('../../../lib/data'),
+      _    = require('underscore');
 }
 
-var Document = function(document) {
+// Document
+// --------
+// 
+// A generic model for representing and transforming digital documents
+
+var Document = function(document, schema) {
   var that = this;
 
   this.id = document.id;
 
   // Initialize document
-  this.nodes = new Data.Graph(seed);
+  this.nodes = new Data.Graph(schema);
   this.nodes.merge(document.nodes);
 
   this.head = this.nodes.get(document.head);
@@ -177,10 +183,6 @@ var Document = function(document) {
     this.logOperation(op);
   };
 
-  this.announceUser = function() {
-
-  };
-
   // Get a specific node
   this.get = function(id) {
     return this.nodes.get(id);
@@ -198,6 +200,42 @@ var Document = function(document) {
   };
 };
 
+
+// Create a new (empty) document
+// --------
+
+Document.create = function(schema) {
+  var doc = {
+    "id": Data.uuid(),
+    "created_at": "2012-04-10T15:17:28.946Z",
+    "updated_at": "2012-04-10T15:17:28.946Z",
+    "head": "/cover/1",
+    "tail": "/text/3",
+    "rev": 3,
+    "nodes": {
+      "/cover/1": {
+        "type": ["/type/node", "/type/cover"],
+        "title": "A new document",
+        "abstract": "The Substance Composer is flexible editing component to be used by applications such as Substance.io for collaborative content composition.",
+        "next": "/section/2",
+        "prev": null
+      },
+      "/section/2": {
+        "type": ["/type/node", "/type/section"],
+        "name": "Plugins",
+        "prev": "/cover/1",
+        "next": "/text/3"
+      },
+      "/text/3": {
+        "type": ["/type/node", "/type/text"],
+        "content": "Enter some text.",
+        "prev": "/section/2",
+        "next": null
+      }
+    }
+  };
+  return new Document(doc, schema);
+};
 
 _.extend(Document.prototype, _.Events);
 
