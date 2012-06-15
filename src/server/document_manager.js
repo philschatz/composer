@@ -25,19 +25,19 @@ _.extend(DocumentManager.prototype, {
       function delegate(fn) {
         return function() {
           _.bind(fn, that);
-          fn.apply(this, [socket].concat(arguments));
+          fn.apply(that, [socket].concat(arguments));
         };
       }
 
       // Hi user
-      this.openSession(socket)
+      that.openSession(socket)
 
       // Do things
-      socket.on('document:create', delegate(this.createDocument));
-      socket.on('document:join',   delegate(this.joinDocument));
-      socket.on('document:leave',  delegate(this.leaveDocument));
-      socket.on('document:update', delegate(this.updateDocument));
-      socket.on('disconnect',      delegate(this.closeSession));
+      socket.on('document:create', delegate(that.createDocument));
+      socket.on('document:join',   delegate(that.joinDocument));
+      socket.on('document:leave',  delegate(that.leaveDocument));
+      socket.on('document:update', delegate(that.updateDocument));
+      socket.on('disconnect',      delegate(that.closeSession));
     });
   },
 
@@ -75,19 +75,19 @@ _.extend(DocumentManager.prototype, {
 
   // A new user joins the party
   openSession: function(socket, cb) {
-    console.log('clearly a new session.')
-    this.sessions[sessionId] = {
+    this.sessions[socket.id] = {
       id: socket.id,
       username: socket.id,
       document: null,
       color: "#82AA15"
     };
+    console.log('Started a new session ' + socket.id);
   },
 
   // When a user leaves the party
   closeSession: function(socket, cb) {
-    console.log('removing session' + socket.id);
-    delete this.sessions[socket.io];
+    console.log('removing session ' + socket.id);
+    delete this.sessions[socket.id];
   }
 
 });

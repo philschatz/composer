@@ -1,20 +1,8 @@
-if (typeof exports !== 'undefined') {
-  var Data = require ('../../../lib/data'),
-      _    = require('underscore');
-}
-
-// Document
-// --------
-// 
-// A generic model for representing and transforming digital documents
-
-var Document = function(document, schema) {
+var Document = function(document) {
   var that = this;
 
-  this.id = document.id;
-
   // Initialize document
-  this.nodes = new Data.Graph(schema);
+  this.nodes = new Data.Graph(seed);
   this.nodes.merge(document.nodes);
 
   this.head = this.nodes.get(document.head);
@@ -39,8 +27,8 @@ var Document = function(document, schema) {
 
     // Process update command
     update: function(options) {
-      that.nodes.get(options.node).set(options.properties);
-      that.trigger('node:update', options.node);
+      var node = {};
+      that.trigger('node:update', node);
     },
 
     // Update selection
@@ -52,6 +40,7 @@ var Document = function(document, schema) {
       }
 
       that.users[options.user].selection = options.nodes;
+
       _.each(options.nodes, function(node) {
         that.selections[node] = options.user;
       });
@@ -81,44 +70,29 @@ var Document = function(document, schema) {
 
     // Move selected nodes
     move: function(options) {
+      // console.log(that.rev);
       if (checkRev(options.rev)) {
         var f = that.get(_.first(options.nodes)), // first node of selection
-            l = that.get(_.last(options.nodes)), // last node of selection
+            l = that.get(_.first(options.nodes)), // last node of selection
             t = that.get(options.target), // target node
-            fp = f.get('prev'), // first-previous
-            ln = l.get('next'), // last-next
-            tn = t.get('next'); // target-next
+            fp = f.get('prev'),
+            ln = l.get('next'),
+            tn = t.get('next');
 
-        t.set({
-          next: f._id,
-          prev: t.get('prev') === l ? (fp ? fp._id : null)
-                                    : (t.get('prev') ? t.get('prev')._id : null)
-        });
+        // console.log('before');
+        // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
 
-        if (fp) {
-          fp.set({next: ln ? ln._id : null});
-        } else {
-          // dealing with the first node
-          that.head = t;
-          console.log('dealing with the first elem');
-        }
+        t.set({next: f._id, prev: t.get('prev') === l ? fp._id : t.get('prev')._id});
+        fp.set({next: ln._id});
         
-        // First node of the selection is now preceded by the target node
-        f.set({prev: t._id});
-
-        if (ln) ln.set({prev: fp ? fp._id : null});
-
+        if (ln) ln.set({prev: fp._id});
         l.set({next: tn ? tn._id : null});
-
-        if (tn) {
-          tn.set({prev: l._id});
-        } else {
-          // Special case: target is tail node  
-          that.tail = l;
-        }
-          
+        if (tn) tn.set({prev: l._id});
         that.trigger('node:move', options);
         that.rev += 1;
+
+        // console.log('after');
+        // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
       }
     },
 
@@ -147,12 +121,9 @@ var Document = function(document, schema) {
   // --------
 
   this.user = {
-    enter: function(user) {
-      this.users[user.id] = { id: user.id, username: user.username, color: user.color || "red"};
-    },
-
-    leave: function(id) {
-      delete this.users[id];
+    // TODO: dynamic color assignment for users
+    announce: function(options) {
+      that.users[options.user] = { username: options.user, color: options.color || "red"};
     }
   };
 
@@ -165,21 +136,21 @@ var Document = function(document, schema) {
     var current = this.head;
     var index = 0;
 
-    fn.call(ctx || this, current, current._id, index);
+    fn.call(ctx || this, current, current._id, index);
     while (current = current.get('next')) {
       index += 1;
       fn.call(ctx || this, current, current._id, index);
     }
   };
 
-  this.logOperation = function(op) {
+  this.logOperation = function(op) {
     this.operations.push(op);
+    this.trigger('operation:executed');
   };
 
-  this.execute = function(op, silent) {
+  this.execute = function(op) {
     var command = op.command.split(':');
     this[command[0]][command[1]](op.params);
-    if (!silent) this.trigger('operation:executed');
     this.logOperation(op);
   };
 
@@ -190,58 +161,26 @@ var Document = function(document, schema) {
 
   // Serialize document state to JSON
   this.toJSON = function() {
-    return {
-      id: this.id,
-      operations: this.operations,
-      nodes: this.nodes.toJSON(),
-      head: this.head._id,
-      tail: this.tail._id
-    }
+
   };
 };
 
-
-// Create a new (empty) document
-// --------
-
-Document.create = function(schema) {
-  var doc = {
-    "id": Data.uuid(),
-    "created_at": "2012-04-10T15:17:28.946Z",
-    "updated_at": "2012-04-10T15:17:28.946Z",
-    "head": "/cover/1",
-    "tail": "/text/3",
-    "rev": 3,
-    "nodes": {
-      "/cover/1": {
-        "type": ["/type/node", "/type/cover"],
-        "title": "A new document",
-        "abstract": "The Substance Composer is flexible editing component to be used by applications such as Substance.io for collaborative content composition.",
-        "next": "/section/2",
-        "prev": null
-      },
-      "/section/2": {
-        "type": ["/type/node", "/type/section"],
-        "name": "Plugins",
-        "prev": "/cover/1",
-        "next": "/text/3"
-      },
-      "/text/3": {
-        "type": ["/type/node", "/type/text"],
-        "content": "Enter some text.",
-        "prev": "/section/2",
-        "next": null
-      }
-    }
-  };
-  return new Document(doc, schema);
-};
-
-_.extend(Document.prototype, _.Events);
 
 // Export for browser
 if (typeof exports !== 'undefined') {
   module.exports = Document;
 } else {
   sc.models.Document = Document;  
+
+// Load a document
+sc.models.Document.load = function(url, cb) {
+  $.getJSON(url, function(data) {
+    cb(null, data);
+  });
+};
+
+_.extend(sc.models.Document.prototype, _.Events);
+
 }
+
+

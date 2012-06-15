@@ -25,23 +25,16 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   build: function() {
-    this.nodes = {};
+    this.nodes = [];
     this.model.each(function(node) {
-      this.nodes[node._id] = this.createNodeView(node);
+      this.nodes.push(this.createNodeView(node));
     }, this);
   },
 
-  // UI updates
-  // --------
-
   insertNode: function(node, options) {
     var view = this.createNodeView(node);
-    this.nodes[node._id] = view;
+    this.nodes.push(view);
     $(view.render().el).appendTo(this.el);
-  },
-
-  updateNode: function(node, properties) {
-    this.nodes[node].update(properties);
   },
 
   // Incoming move node operation
@@ -59,10 +52,6 @@ sc.views.Document = Dance.Performer.extend({
         .find('.handle').css('background', this.model.users[user].color);
     }, this);
   },
-
-
-  // Issue commands
-  // --------
 
   expandSelection: function() {
     var lastnode = _.last(this.model.users[composer.user].selection);
@@ -91,9 +80,7 @@ sc.views.Document = Dance.Performer.extend({
 
   moveUp: function() {
     var selection = this.model.users[composer.user].selection;
-    var first = this.model.get(_.first(selection));
-
-    // 1st node (cover) stays on top
+    var first = this.model.get(_.last(selection));
     if (first.get('prev') && first.get('prev').get('prev')) {
       this.model.execute({command:"node:move", params: { 
         user: "michael",
@@ -127,8 +114,8 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   render: function () {
-    this.model.each(function(node) {
-      $(this.nodes[node._id].render().el).appendTo(this.el);
+    _.each(this.nodes, function(node, index) {
+      $(node.render().el).appendTo(this.el);
     }, this);
     return this;
   },
