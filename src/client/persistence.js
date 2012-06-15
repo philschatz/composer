@@ -48,25 +48,31 @@ var AjaxAdapter = function() {
 // ===========
 
 var SocketIOAdapter = function() {
-  var socket = io.connect('http://localhost');
+  var socket = io.connect();
   var document = null;
 
   function connected() {
-    console.log('connected');
+    console.log('socket: connected');
+  }
+
+  function disconnected() {
+    console.log('socket: disconnected');
   }
 
   // Merge in operations from other clients
   // -----------
 
   function receiveUpdate(op) {
-    
+    console.log("socket: Received Update!");
+    console.log(op);
   }
 
   // Update document incrementally using operations
   // -----------
 
   this.update = function(op, cb) {
-    socket.emit('update:document', op, function (err, data) {
+    console.log("socket: Sending Document Update");
+    socket.emit('document:update', op, function (err, data) {
       cb(err, data);
     });
   };
@@ -75,7 +81,7 @@ var SocketIOAdapter = function() {
   // -----------
 
   this.create = function(cb) {
-    socket.emit('create:document', function(err, doc) {
+    socket.emit('document:create', function(err, doc) {
       cb(null, doc);
     });
   },  
@@ -85,13 +91,14 @@ var SocketIOAdapter = function() {
 
   this.open = function(id, rev, cb) {
     document = id;
-    socket.emit('open:document', id, rev, function(err, data) {
+    socket.emit('document:open', id, rev, function(err, data) {
       console.log('got it', data);
     });
   },
 
   socket.on('connect', connected);
   socket.on('update', receiveUpdate);
+  socket.on('disconnect', disconnected);
 };
 
 window.store = new SocketIOAdapter();

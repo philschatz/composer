@@ -25,7 +25,7 @@ _.extend(DocumentManager.prototype, {
       function delegate(fn) {
         return function() {
           _.bind(fn, that);
-          fn.apply(that, [socket].concat(arguments));
+          fn.apply(that, [socket].concat(arguments).concat(function(){}));
         };
       }
 
@@ -46,6 +46,7 @@ _.extend(DocumentManager.prototype, {
 
   // Create a document, join the fun
   createDocument: function(socket, cb) {
+    console.log("Received document:create");
     var document = Document.create(util.schema());
     registerDocument(document);
     cb(null, { document: doc, sessions: {} });
@@ -60,6 +61,7 @@ _.extend(DocumentManager.prototype, {
   },
 
   updateDocument: function(socket, operation, cb) {
+    console.log("Received document:update");
     cb(null, 'confirmed');
   },
 
@@ -68,6 +70,7 @@ _.extend(DocumentManager.prototype, {
   // be just overruled by another call of joinDocument
   leaveDocument: function(socket, cb) {
     // TODO: implement
+    console.log("Received document:leave");
   },
 
   // Session

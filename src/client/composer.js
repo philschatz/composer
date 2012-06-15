@@ -21,6 +21,7 @@
       this.views.operations = new Substance.Composer.views.Operations({model: this.model});
       
       this.model.on('operation:executed', this.renderOperations, this);
+      this.model.on('operation:executed', this.sendUpdate, this);
 
       // Initialize Instructor
       this.instructor = new Substance.Composer.instructors.Instructor({});
@@ -55,6 +56,10 @@
 
     renderOperations: function() {
       this.$('#sidebar').html(this.views.operations.render().el);
+    },
+    
+    sendUpdate: function(data) {
+      window.store.update(data);
     }
   },
   // Class Variables

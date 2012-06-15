@@ -145,7 +145,7 @@ var Document = function(document) {
 
   this.logOperation = function(op) {
     this.operations.push(op);
-    this.trigger('operation:executed');
+    this.trigger('operation:executed', op);
   };
 
   this.execute = function(op) {
