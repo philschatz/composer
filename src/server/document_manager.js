@@ -11,6 +11,7 @@ var DocumentManager = function(server) {
   this.io = require('socket.io').listen(server);
   this.documents = [];
   this.sessions = [];
+  this.locks = [];
   this.bindHandlers();
 };
 
@@ -25,7 +26,7 @@ _.extend(DocumentManager.prototype, {
       function delegate(fn) {
         return function() {
           _.bind(fn, that);
-          fn.apply(that, [socket].concat(arguments).concat(function(){}));
+          fn.apply(that, [socket].concat(arguments[0]).concat(function(){}));
         };
       }
 
@@ -62,6 +63,10 @@ _.extend(DocumentManager.prototype, {
 
   updateDocument: function(socket, operation, cb) {
     console.log("Received document:update");
+    console.log(operation);
+    if (operation.command == "node:select") {
+      this.selectNodes(socket, operation.params, cb);
+    }
     cb(null, 'confirmed');
   },
 
@@ -71,6 +76,41 @@ _.extend(DocumentManager.prototype, {
   leaveDocument: function(socket, cb) {
     // TODO: implement
     console.log("Received document:leave");
+  },
+
+  // Node
+  // -------------
+  selectNodes: function(socket, params, cb) {
+    console.log("Emitting node:selected");
+    
+    var that = this;
+    var nodes = params.nodes;
+    var user = params.user;
+    
+    var selectedNodes = [];
+    _.each(nodes, function(node) {
+    
+      if (!that.locks[node]) {
+        that.locks[node] = socket.id;
+        selectedNodes.push(node);
+      }
+    });
+    that.io.sockets.emit("node:selected", { nodes:selectedNodes, user:user });
+    cb(null, 'selected');
+  },
+
+  leaveNodes: function(socket, nodes, cb) {
+    console.log("Emitting node:unlocked");
+    
+    var that = this;
+    _.each(nodes, function(node) {
+    
+      if (that.locks[node] == socket.id) {
+        delete that.locks[node];
+        that.io.sockets.emit("node:unlocked", { nodes:[node], user:"john" });
+      }
+    });
+    cb(null, 'entered');
   },
 
   // Session
@@ -90,6 +130,13 @@ _.extend(DocumentManager.prototype, {
   // When a user leaves the party
   closeSession: function(socket, cb) {
     console.log('removing session ' + socket.id);
+    
+    // Remove locked nodes
+    for (node in this.locks) {
+      if (this.locks[node] == socket.id) {
+        delete this.locks[node];
+      }
+    }
     delete this.sessions[socket.id];
   }
 

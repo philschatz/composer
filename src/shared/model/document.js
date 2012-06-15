@@ -33,6 +33,14 @@ var Document = function(document) {
 
     // Update selection
     select: function(options) {
+      // this.selected(options);
+      // Rely on the socket working
+      // TODO: allow disconnected use
+      window.store.trigger('node:select', options);
+    },
+    
+    // Remote selection
+    selected: function(options) {
       if (that.users[options.user].selection) {
         _.each(that.users[options.user].selection, function(node) {
           delete that.selections[node];
@@ -44,9 +52,9 @@ var Document = function(document) {
       _.each(options.nodes, function(node) {
         that.selections[node] = options.user;
       });
-
       that.trigger('node:select', that.selections);
     },
+    
 
     // Insert a new node
     insert: function(options) {

@@ -49,7 +49,11 @@ var AjaxAdapter = function() {
 
 var SocketIOAdapter = function() {
   var socket = io.connect();
-  var document = null;
+  var doc = null;
+
+  this.setDocument = function(document) {
+    doc = document;
+  };
 
   function connected() {
     console.log('socket: connected');
@@ -77,6 +81,13 @@ var SocketIOAdapter = function() {
     });
   };
 
+  this.trigger = function(name, op, cb) {
+    console.log("socket: Sending Event");
+    socket.emit('document:update', {name:name, params:op}, function (err, data) {
+      cb(err, data);
+    });
+  };
+  
   // Create a document
   // -----------
 
@@ -84,20 +95,31 @@ var SocketIOAdapter = function() {
     socket.emit('document:create', function(err, doc) {
       cb(null, doc);
     });
-  },  
+  };  
 
   // Open a document
   // -----------
 
   this.open = function(id, rev, cb) {
-    document = id;
+    var document = id;
     socket.emit('document:open', id, rev, function(err, data) {
       console.log('got it', data);
     });
-  },
+  };
+
+  // Handle locking/unlocking of nodes
+  selectedNodes = function(data) {
+    doc.execute({ command: 'node:selected', params: data });
+  };
+  unlockedNode = function(data) {
+    doc.unlockedNode(data);
+  };
+
 
   socket.on('connect', connected);
   socket.on('update', receiveUpdate);
+  socket.on('node:selected', selectedNodes);
+  socket.on('node:unlocked', unlockedNode);
   socket.on('disconnect', disconnected);
 };
 

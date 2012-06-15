@@ -7,7 +7,10 @@
     el: 'container',
     initialize: function(options) {
 
+      window.store.setDocument(this);
+
       // Document Model
+      this.id = this.model.id;
       this.model = new Composer.models.Document(this.model);
 
       this.user = options.user;
@@ -54,13 +57,16 @@
       this.$('#document').replaceWith(this.views.document.render().el);
     },
 
-    renderOperations: function() {
+    renderOperations: function(data) {
       this.$('#sidebar').html(this.views.operations.render().el);
+      console.log("Event " + data.command);
+      console.log(data);
     },
     
     sendUpdate: function(data) {
-      window.store.update(data);
-    }
+      window.store.update({command: data.command, params: data.params});
+    },
+    
   },
   // Class Variables
   {

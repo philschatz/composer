@@ -54,7 +54,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   select: function (e) {
     this.document.execute({command:"node:select", params: { user: "michael", nodes: [this.model._id] }});
   },
-
+  
   focus: function () {},
 
   render: function () {
