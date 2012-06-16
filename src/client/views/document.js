@@ -59,7 +59,7 @@ sc.views.Document = Dance.Performer.extend({
       var next = this.model.get(lastnode).get('next');
       if (next) {
         var newSelection = this.model.users[composer.user].selection.concat([next._id]);
-        this.model.execute({command:"node:select", params: { user: "michael", nodes: newSelection }});
+        this.model.execute({command:"node:select", params: { user: $('username').value(), nodes: newSelection }});
       }
     }
   },
