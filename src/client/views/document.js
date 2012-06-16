@@ -23,6 +23,10 @@ sc.views.Document = Dance.Performer.extend({
 
     $(document.body).keydown(this.onKeydown);
   },
+  
+  _user: function() {
+    return $('.username').val();
+  },
 
   build: function() {
     this.nodes = [];
@@ -54,36 +58,36 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   expandSelection: function() {
-    var lastnode = _.last(this.model.users[composer.user].selection);
+    var lastnode = _.last(this.model.users[this._user()].selection);
     if (lastnode) {
       var next = this.model.get(lastnode).get('next');
       if (next) {
-        var newSelection = this.model.users[composer.user].selection.concat([next._id]);
-        this.model.execute({command:"node:select", params: { user: $('username').value(), nodes: newSelection }});
+        var newSelection = this.model.users[this._user()].selection.concat([next._id]);
+        this.model.execute({command:"node:select", params: { user: this._user(), nodes: newSelection }});
       }
     }
   },
 
   narrowSelection: function() {
-    var selection = this.model.users[composer.user].selection;
+    var selection = this.model.users[this._user()].selection;
     selection = _.clone(selection).splice(0, selection.length-1);
-    this.model.execute({command:"node:select", params: { user: "michael", nodes: selection }});
+    this.model.execute({command:"node:select", params: { user: this._user(), nodes: selection }});
   },
 
   moveDown: function() {
-    var selection = this.model.users[composer.user].selection;
+    var selection = this.model.users[this._user()].selection;
     var last = this.model.get(_.last(selection));
     if (last.get('next')) {
-      this.model.execute({command:"node:move", params: { user: "michael", nodes: selection, target: last.get('next')._id, rev: this.model.rev }});
+      this.model.execute({command:"node:move", params: { user: this._user(), nodes: selection, target: last.get('next')._id, rev: this.model.rev }});
     }
   },
 
   moveUp: function() {
-    var selection = this.model.users[composer.user].selection;
+    var selection = this.model.users[this._user()].selection;
     var first = this.model.get(_.last(selection));
     if (first.get('prev') && first.get('prev').get('prev')) {
       this.model.execute({command:"node:move", params: { 
-        user: "michael",
+        user: this._user(),
         nodes: selection,
         target: first.get('prev').get('prev')._id,
         rev: this.model.rev
