@@ -65,7 +65,6 @@ _.extend(DocumentManager.prototype, {
 
   updateDocument: function(socket, operation, cb) {
     console.log("Received document:update");
-    console.log(operation);
     cb(null, 'confirmed');
   },
 
@@ -85,7 +84,6 @@ _.extend(DocumentManager.prototype, {
     var user = params.user;
 
     console.log("Received node:select");
-    console.log(params);
     
     // Clear out all the locks the user currently has on nodes
     for(node in this.locks) {
@@ -93,8 +91,6 @@ _.extend(DocumentManager.prototype, {
         delete that.locks[node];
       }
     };
-    console.log("Emitting node:selected");
-    console.log(that.locks);
 
     // And set locks on ones the user has just sent us
     //   (assuming no one else has locked it)
@@ -103,20 +99,7 @@ _.extend(DocumentManager.prototype, {
         that.locks[node] = user;
       }
     });
-    this.io.sockets.emit("node:selected", that.locks);
-    cb(null, 'selected');
-  },
-
-  leaveNodes: function(socket, nodes, cb) {
-    console.log("Emitting node:unlocked");
-    
-    var that = this;
-    _.each(nodes, function(node) {
-    
-      if (that.locks[node] == socket.id) {
-        delete that.locks[node];
-      }
-    });
+    console.log("Emitting node:selected");
     this.io.sockets.emit("node:selected", that.locks);
     cb(null, 'selected');
   },
