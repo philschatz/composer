@@ -64,7 +64,7 @@
     },
     
     sendUpdate: function(data) {
-      window.store.update({command: data.command, params: data.params});
+      window.store.trigger(data.command, data.params);
     },
     
   },

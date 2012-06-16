@@ -83,7 +83,7 @@ var SocketIOAdapter = function() {
 
   this.trigger = function(name, op, cb) {
     console.log("socket: Sending Event");
-    socket.emit('document:update', {name:name, params:op}, function (err, data) {
+    socket.emit(name, op, function (err, data) {
       cb(err, data);
     });
   };

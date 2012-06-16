@@ -41,17 +41,29 @@ var Document = function(document) {
     
     // Remote selection
     selected: function(options) {
-      if (that.users[options.user].selection) {
-        _.each(that.users[options.user].selection, function(node) {
-          delete that.selections[node];
-        });
+      // Remove all selections that the server doesn't know about
+      that.selections = {};
+      // Remove all selections attributed to users (so we can re-add them)
+      for (user in that.users) {
+        that.users[user].selection = [];
       }
 
-      that.users[options.user].selection = options.nodes;
-
-      _.each(options.nodes, function(node) {
-        that.selections[node] = options.user;
-      });
+      // Add/Edit selections
+      for (var node in options) {
+        var user = options[node];
+        that.selections[node] = user;
+        
+        //Hack... should not happen
+        if (!(user in that.users)) {
+          that.users[user] = {};
+        }
+        if (!('selection' in that.users[user])) {
+          that.users[user].selection = [];
+        }
+        that.users[user].selection.push(node);
+      
+      }
+      
       that.trigger('node:select', that.selections);
     },
     

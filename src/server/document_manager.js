@@ -11,7 +11,7 @@ var DocumentManager = function(server) {
   this.io = require('socket.io').listen(server);
   this.documents = [];
   this.sessions = [];
-  this.locks = [];
+  this.locks = {};
   this.bindHandlers();
 };
 
@@ -38,6 +38,7 @@ _.extend(DocumentManager.prototype, {
       socket.on('document:join',   delegate(that.joinDocument));
       socket.on('document:leave',  delegate(that.leaveDocument));
       socket.on('document:update', delegate(that.updateDocument));
+      socket.on('node:select',     delegate(that.selectNodes));
       socket.on('disconnect',      delegate(that.closeSession));
     });
   },
@@ -55,6 +56,7 @@ _.extend(DocumentManager.prototype, {
 
   // Join a document editing session, update the session
   joinDocument: function(socket, document, cb) {
+    console.log("Received document:join");
     this.documents[document.id] = {
       collaborators: [socket.id],
       model: document
@@ -64,9 +66,6 @@ _.extend(DocumentManager.prototype, {
   updateDocument: function(socket, operation, cb) {
     console.log("Received document:update");
     console.log(operation);
-    if (operation.command == "node:select") {
-      this.selectNodes(socket, operation.params, cb);
-    }
     cb(null, 'confirmed');
   },
 
@@ -81,21 +80,30 @@ _.extend(DocumentManager.prototype, {
   // Node
   // -------------
   selectNodes: function(socket, params, cb) {
-    console.log("Emitting node:selected");
-    
     var that = this;
     var nodes = params.nodes;
     var user = params.user;
+
+    console.log("Received node:select");
+    console.log(params);
     
-    var selectedNodes = [];
+    // Clear out all the locks the user currently has on nodes
+    for(node in this.locks) {
+      if (that.locks[node] == user) {
+        delete that.locks[node];
+      }
+    };
+    console.log("Emitting node:selected");
+    console.log(that.locks);
+
+    // And set locks on ones the user has just sent us
+    //   (assuming no one else has locked it)
     _.each(nodes, function(node) {
-    
       if (!that.locks[node]) {
-        that.locks[node] = socket.id;
-        selectedNodes.push(node);
+        that.locks[node] = user;
       }
     });
-    that.io.sockets.emit("node:selected", { nodes:selectedNodes, user:user });
+    this.io.sockets.emit("node:selected", that.locks);
     cb(null, 'selected');
   },
 
@@ -107,10 +115,10 @@ _.extend(DocumentManager.prototype, {
     
       if (that.locks[node] == socket.id) {
         delete that.locks[node];
-        that.io.sockets.emit("node:unlocked", { nodes:[node], user:"john" });
       }
     });
-    cb(null, 'entered');
+    this.io.sockets.emit("node:selected", that.locks);
+    cb(null, 'selected');
   },
 
   // Session
