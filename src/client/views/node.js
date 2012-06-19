@@ -58,8 +58,54 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   focus: function () {},
 
   render: function () {
+    var that = this;
     this.contentEl = $('<div class="content"></div>').appendTo(this.el);
     this.handleEl = $('<div class="handle"></div>').appendTo(this.el);
+    var scope = 'content-node-only';
+
+
+    function removeDropTargets() {
+      $('.drop-target').each(function(i, el) {
+        $(el).remove();
+      });
+    }
+
+    $(this.el).draggable({
+      handle: this.handleEl,
+      scope: scope,
+      revert: "invalid",
+      cursor: "move",
+      stop: removeDropTargets,
+      start: function(event, ui) {
+        var node = event.currentTarget;
+        $('.content-node').each(function(i, el) {
+          if(el === node) return; //Skip the node we're dragging
+          var before = $('<div class="drop-target before"/>').prependTo($(this));
+          var after = $('<div class="drop-target after"/>').appendTo($(this));
+          
+          before.droppable({
+            scope: scope,
+            drop: function(event, ui) {
+              that.document.execute({command:"node:move", params: {user: $('.username').val(), nodes: [that.model._id], target: "/text/PHIL"}});
+              $(that.el).insertBefore($(this).parent());
+              $(that.el).attr('style', '');
+              removeDropTargets();
+            }
+          });
+
+          after.droppable({
+            scope: scope,
+            drop: function(event, ui) {
+              that.document.execute({command:"node:move", params: {user: $('.username').val(), nodes: [that.model._id], target: "/text/PHIL"}});
+              $(that.el).insertAfter($(this).parent());
+              $(that.el).attr('style', '');
+              removeDropTargets();
+            }
+          });
+
+        });
+      }
+    });
     return this;
   }
 
