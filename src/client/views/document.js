@@ -18,6 +18,7 @@ sc.views.Document = Dance.Performer.extend({
     this.model.on('node:update', this.updateNode, this);
     this.model.on('node:select', this.updateSelections, this);
     this.model.on('node:move', this.move, this);
+    this.model.on('node:moved', this.move, this);
 
     this.build();
 
@@ -47,6 +48,10 @@ sc.views.Document = Dance.Performer.extend({
     $selection.insertAfter($('#'+_.htmlId(options.target)));
   },
 
+  moved: function(options) {
+    this.move(options);
+  },
+  
   updateSelections: function(selections) {
     $('.content-node.selected .handle').css('background', '');
     $('.content-node.selected').removeClass('selected');

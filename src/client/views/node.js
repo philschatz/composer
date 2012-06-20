@@ -79,7 +79,9 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
       scope: scope,
       hoverClass: "drop-before",
       drop: function(event, ui) {
-        that.document.execute({command:"node:move", params: {user: $('.username').val(), nodes: [that.model._id], target: "/text/PHIL"}});
+        // Get back the node id from the html id (replace "_" with "/")
+        var src = _.htmlId(ui.draggable.attr('id')).replace(/_/g, '/');
+        that.document.execute({command:"node:move", params: {user: $('.username').val(), nodes: [src], target: that.model._id}});
         ui.draggable.insertBefore($(this));
         ui.draggable.attr('style', '');
       }

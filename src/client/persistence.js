@@ -119,7 +119,9 @@ var SocketIOAdapter = function() {
   socket.on('connect', connected);
   socket.on('update', receiveUpdate);
   socket.on('node:selected', selectedNodes);
-  socket.on('node:unlocked', unlockedNode);
+  socket.on('user:announce', function(params) { doc.execute({command:'user:announce', params:params}); });
+  socket.on('node:insert', function(params) { doc.execute({command:'node:insert', params:params}); });
+  socket.on('node:moved', function(params) { doc.execute({command:'node:moved', params:params}); });
   socket.on('disconnect', disconnected);
 };
 
