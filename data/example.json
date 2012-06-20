@@ -15,9 +15,16 @@
     },
     "/section/2": {
       "type": ["/type/node", "/type/section"],
-      "name": "Plugins",
+      "name": "How to Use",
       "prev": "/cover/1",
+      "next": "/text/3"
+    },
+    "/text/3": {
+      "type": ["/type/node", "/type/text"],
+      "content": "Click inside text to lock it and start editing (the edits don't get updated but the lock does). Then, use the handles on the left to move nodes around!",
+      "prev": "/section/2",
       "next": null
     }
+
   }
 }
