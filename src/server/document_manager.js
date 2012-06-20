@@ -27,7 +27,7 @@ var DocumentManager = function(server) {
     {"command": "user:announce", "params": {"user": "john", "color": "#4da6c7"}},
     {"command": "node:select",   "params": {"user": "john", "nodes": ["/cover/1"], "rev": 11}},
     {"command": "node:select",   "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "rev": 11}},
-    {"command": "node:moved",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/5", "rev": 11}}
+    {"command": "node:moved",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/4", "rev": 11}}
   ];
   this.locks = {};
   this.bindHandlers();
