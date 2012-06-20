@@ -103,7 +103,7 @@ var Document = function(document) {
         // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
 
         t.set({next: f._id, prev: t.get('prev') === l ? fp._id : t.get('prev')._id});
-        fp.set({next: ln._id});
+        fp.set({next: ln ? ln._id : null});
         
         if (ln) ln.set({prev: fp._id});
         l.set({next: tn ? tn._id : null});
