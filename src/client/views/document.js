@@ -25,10 +25,6 @@ sc.views.Document = Dance.Performer.extend({
     $(document.body).keydown(this.onKeydown);
   },
   
-  _user: function() {
-    return $('.username').val();
-  },
-
   build: function() {
     this.nodes = [];
     this.model.each(function(node) {
@@ -63,23 +59,29 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   expandSelection: function() {
+    alert("Expand Selection doesn't currently work");
+    return;
     var lastnode = _.last(this.model.users[this._user()].selection);
     if (lastnode) {
       var next = this.model.get(lastnode).get('next');
       if (next) {
         var newSelection = this.model.users[this._user()].selection.concat([next._id]);
-        this.model.execute({command:"node:select", params: { user: this._user(), nodes: newSelection }});
+        this.model.execute({command:"node:select", params: { nodes: newSelection }});
       }
     }
   },
 
   narrowSelection: function() {
+    alert("Narrow Selection doesn't currently work");
+    return;
     var selection = this.model.users[this._user()].selection;
     selection = _.clone(selection).splice(0, selection.length-1);
-    this.model.execute({command:"node:select", params: { user: this._user(), nodes: selection }});
+    this.model.execute({command:"node:select", params: { nodes: selection }});
   },
 
   moveDown: function() {
+    console.log("Move Down doesn't currently work");
+    return;
     var selection = this.model.users[this._user()].selection;
     var last = this.model.get(_.last(selection));
     if (last.get('next')) {
@@ -88,6 +90,8 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   moveUp: function() {
+    console.log("Move Up doesn't currently work");
+    return;
     var selection = this.model.users[this._user()].selection;
     var first = this.model.get(_.last(selection));
     if (first.get('prev') && first.get('prev').get('prev')) {

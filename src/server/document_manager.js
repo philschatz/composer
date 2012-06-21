@@ -4,6 +4,36 @@ var child_process = require('child_process'),
     ds = new require('./document_storage.js');
 
 
+/*
+Communication protocol:
+
+server              client
+---------------------------
+                <--    connect
+user:joined     -->>
+node:selected   -->
+
+
+                <--  node:select
+node:selected   -->>
+
+
+                <--  node:move
+node:moved      -->> { rev++ }
+
+
+                <-- node:edit
+node:edited     -->> { rev++ }
+
+
+
+user: the socket id
+
+*/
+
+var COLORS = [ '#cc3333', '#3333cc', '#cccc33', '#cc33cc' ];
+var lastColor = 0;
+
 
 // Document Manager
 // =============
@@ -13,7 +43,7 @@ var DocumentManager = function(server) {
   this.documents = [];
   this.sessions = [];
   this.sentMessages = [ // Re-send them when a new client joins
-    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}},    
+    {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}},
     // {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 3, "attributes": {"content": "It's literally impossible to build an editor that can be used across different disciplines. Scientists, writers and journalists all have different needs. That's why Substance just provides the core infrastructure, and introduces Content Types that can be developed individually by the community, tailored to their specific needs."}}},
     //{"command": "node:insert",   "params": {"user": "michael", "type": "map", "rev": 3, "attributes": {"content": "Hey! I'm a map."}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "section", "rev": 3, "attributes": {"name": "Structured Composition"}}},
@@ -29,6 +59,7 @@ var DocumentManager = function(server) {
     {"command": "node:select",   "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "rev": 11}},
     {"command": "node:moved",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/4", "rev": 11}}
   ];
+  this.rev = 11; //0;
   this.locks = {};
   this.bindHandlers();
 };
@@ -53,17 +84,22 @@ _.extend(DocumentManager.prototype, {
 
       // Do things
       socket.on('document:create', delegate(that.createDocument));
-      socket.on('document:join',   delegate(that.joinDocument));
-      socket.on('document:leave',  delegate(that.leaveDocument));
-      socket.on('document:update', delegate(that.updateDocument));
+      //socket.on('document:join',   delegate(that.joinDocument));
+      //socket.on('document:leave',  delegate(that.leaveDocument));
+      //socket.on('document:update', delegate(that.updateDocument));
       socket.on('node:select',     delegate(that.selectNodes));
       socket.on('node:move',       delegate(that.moveNodes));
       socket.on('disconnect',      delegate(that.closeSession));
+      
+      // Notify everyone someone joined our party
+      var color = COLORS[lastColor++ % COLORS.length];
+      that.emitAll('user:announce', {user: socket.id, color: color});
       
       // Perform some bootstrap operations
       _.each(that.sentMessages, function(message) {
         socket.emit(message.command, message.params);
       });
+      
       // Send an update of users and their locks
       socket.emit('node:selected', that.locks);
       
@@ -115,7 +151,7 @@ _.extend(DocumentManager.prototype, {
   selectNodes: function(socket, params, cb) {
     var that = this;
     var nodes = params.nodes;
-    var user = params.user;
+    var user = socket.id;
 
     console.log("Received node:select");
     
@@ -141,18 +177,46 @@ _.extend(DocumentManager.prototype, {
   moveNodes: function(socket, params, cb) {
     var that = this;
     var target = params.target;
-    var user = params.user;
+    var user = socket.id;
 
     console.log("Received node:move");
     
     // Make sure the user has the node locked or that it is not locked
     if((target in this.locks) && (this.locks[target] != user)) {
-      console.log("Ignoring move");
-      return;
+      //console.log("Ignoring move");
+      //return;
     };
+
+    this.rev ++;
+    params.rev = this.rev;
+    params.user = socket.id;
 
     this.emitAll("node:moved", params);
     cb(null, 'selected');
+  },
+
+  editNodes: function(socket, params, cb) {
+    var that = this;
+    var nodes = params.nodes;
+    var user = params.user;
+    var valid = true;
+
+    console.log("Received node:edit");
+    
+    // Make sure the user has the node locked or that it is not locked
+    _.each(nodes, function(node) {
+      if((target in this.locks) && (this.locks[target] != user)) {
+        console.log("Ignoring edit. user doesn't have a lock");
+        valid = false;
+      };
+    });
+    if (!valid) return;
+    
+    this.rev ++;
+    params.rev = this.rev;
+
+    this.emitAll("node:edited", params);
+    cb(null, 'edited');
   },
 
   // Session
@@ -180,6 +244,8 @@ _.extend(DocumentManager.prototype, {
       }
     }
     delete this.sessions[socket.id];
+    
+    this.io.sockets.emit('user:left', {user: socket.id});
   }
 
 });

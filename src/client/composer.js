@@ -13,9 +13,6 @@
       this.id = this.model.id;
       this.model = new Composer.models.Document(this.model);
 
-      this.user = options.user;
-      $('.username').val(options.user);
-
       // Possible modes: edit, view, patch, apply-patch
       this.mode = "edit";
 

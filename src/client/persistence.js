@@ -48,11 +48,22 @@ var AjaxAdapter = function() {
 // ===========
 
 var SocketIOAdapter = function() {
-  var socket = io.connect();
+  var socket = null;
   var doc = null;
 
   this.setDocument = function(document) {
     doc = document;
+    socket = io.connect();
+
+    socket.on('connect', connected);
+    socket.on('update', receiveUpdate);
+    
+    var commands = ['user:announce', 'user:left', 'node:selected', 'node:insert', 'node:moved'];
+    _.each(commands, function(cmd) {
+      socket.on(cmd, function(params) { doc.execute({command:cmd, params:params}); });
+    });
+    
+    socket.on('disconnect', disconnected);
   };
 
   function connected() {
@@ -82,7 +93,7 @@ var SocketIOAdapter = function() {
   };
 
   this.trigger = function(name, op, cb) {
-    console.log("socket: Sending Event");
+    console.log("socket: Sending Event", name, op);
     socket.emit(name, op, function (err, data) {
       cb(err, data);
     });
@@ -107,22 +118,6 @@ var SocketIOAdapter = function() {
     });
   };
 
-  // Handle locking/unlocking of nodes
-  selectedNodes = function(data) {
-    doc.execute({ command: 'node:selected', params: data });
-  };
-  unlockedNode = function(data) {
-    doc.unlockedNode(data);
-  };
-
-
-  socket.on('connect', connected);
-  socket.on('update', receiveUpdate);
-  socket.on('node:selected', selectedNodes);
-  socket.on('user:announce', function(params) { doc.execute({command:'user:announce', params:params}); });
-  socket.on('node:insert', function(params) { doc.execute({command:'node:insert', params:params}); });
-  socket.on('node:moved', function(params) { doc.execute({command:'node:moved', params:params}); });
-  socket.on('disconnect', disconnected);
 };
 
 window.store = new SocketIOAdapter();

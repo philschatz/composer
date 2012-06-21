@@ -52,7 +52,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   // TODO: move to document level ?
   select: function (e) {
-    this.document.execute({command:"node:select", params: { user: $('.username').val(), nodes: [this.model._id] }});
+    this.document.execute({command:"node:select", params: { nodes: [this.model._id] }});
   },
   
   focus: function () {},
@@ -81,7 +81,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
       drop: function(event, ui) {
         // Get back the node id from the html id (replace "_" with "/")
         var src = _.htmlId(ui.draggable.attr('id')).replace(/_/g, '/');
-        that.document.execute({command:"node:move", params: {user: $('.username').val(), nodes: [src], target: that.model._id}});
+        that.document.execute({command:"node:move", params: { nodes: [src], target: that.model._id}});
         ui.draggable.insertAfter($(this));
         ui.draggable.attr('style', '');
       }

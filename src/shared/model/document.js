@@ -151,6 +151,10 @@ var Document = function(document) {
     // TODO: dynamic color assignment for users
     announce: function(options) {
       that.users[options.user] = { username: options.user, color: options.color || "red"};
+    },
+
+    left: function(options) {
+      delete that.users[options.user];
     }
   };
 
