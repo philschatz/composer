@@ -17,7 +17,7 @@ var Document = function(document) {
   this.operations = [];
 
   function checkRev(rev) {
-    return that.rev === rev;
+    return that.rev <= rev;
   }
 
   // Node API
@@ -29,6 +29,19 @@ var Document = function(document) {
     update: function(options) {
       var node = {};
       that.trigger('node:update', node);
+    },
+
+    updated: function(options) {
+      if (checkRev(options.rev)) {
+        var node = that.nodes.get(options.node);
+        if (node) {
+          node.set(options.properties);
+          that.rev = options.rev;
+          that.trigger('node:updated', node);
+          return node;
+        }
+      }
+      return null;
     },
 
     // Update selection
@@ -69,7 +82,7 @@ var Document = function(document) {
     
 
     // Insert a new node
-    insert: function(options) {
+    inserted: function(options) {
       if (checkRev(options.rev)) {
         
         var node = that.nodes.set(_.extend({
@@ -98,15 +111,16 @@ var Document = function(document) {
             fp = f.get('prev'),
             ln = l.get('next'),
             tn = t.get('next');
+            tp = t.get('prev')
 
         // console.log('before');
         // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
 
-        t.set({next: f._id, prev: t.get('prev') === l ? fp._id : t.get('prev')._id});
-        fp.set({next: ln ? ln._id : null});
+        t.set({next: f._id, prev: tp === l ? (fp ? fp._id : null) : (tp ? tp._id : null)});
+        if (fp) fp.set({next: ln ? ln._id : null});
         
-        if (ln) ln.set({prev: fp._id});
-        l.set({next: tn ? tn._id : null});
+        if (ln) ln.set({prev: (fp ? fp._id : null)});
+        l.set({next: (tn ? tn._id : null)});
         if (tn) tn.set({prev: l._id});
 
         // console.log('after');

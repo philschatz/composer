@@ -57,14 +57,23 @@ var SocketIOAdapter = function() {
 
     socket.on('connect', connected);
     socket.on('update', receiveUpdate);
+
+    socket.on('document:hello', receiveHello);
     
-    var commands = ['user:announce', 'user:left', 'node:selected', 'node:insert', 'node:moved'];
+    var commands = ['user:announce', 'user:left', 'node:selected', 'node:inserted', 'node:moved', 'node:updated'];
     _.each(commands, function(cmd) {
       socket.on(cmd, function(params) { doc.execute({command:cmd, params:params}); });
     });
     
     socket.on('disconnect', disconnected);
   };
+
+  function receiveHello(params) {
+    console.log("Event received HELLO!", params);
+    doc.user = params.user;
+    // TODO: Record this user's color
+    //doc.model.users[params.user] = params;
+  }
 
   function connected() {
     console.log('socket: connected');
@@ -95,7 +104,7 @@ var SocketIOAdapter = function() {
   this.trigger = function(name, op, cb) {
     console.log("socket: Sending Event", name, op);
     socket.emit(name, op, function (err, data) {
-      cb(err, data);
+      if(cb) { cb(err, data); }
     });
   };
   

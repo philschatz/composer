@@ -42,7 +42,13 @@
 
     // Dispatch Operation
     execute: function(op) {
-      this.model.execute(op);      
+      if(op.params.user == this.user) {
+        //Ignore remote responses to local messages
+        console.log("ignoring local event");
+      } else {
+        console.log("Event received: " + op.command, op.params);
+        this.model.execute(op);
+      }
     },
 
     start: function() {

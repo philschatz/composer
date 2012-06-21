@@ -22,14 +22,7 @@ sc.views.Node.define('/type/text', {
 
   // Dispatch local update to server
   serializeUpdate: function() {
-    return {
-      "command": "node:update",
-      "params": {
-        "node": "/text/2", 
-        "user": "michael",
-        "properties": { "content": this.editor.getValue()}
-      }
-    }
+    return {content: this.editor.getValue()};
   },
 
   render: function () {

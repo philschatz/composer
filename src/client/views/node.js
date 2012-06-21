@@ -21,7 +21,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   // Dispatching a change
   dispatch: function() {
-    dispatch(this.serializeUpdate());
+    this.document.execute({command:"node:update", params: { node: this.model._id, properties: this.serializeUpdate() }});
   },
 
   // Events

@@ -16,6 +16,7 @@ sc.views.Document = Dance.Performer.extend({
 
     this.model.on('node:insert', this.insertNode, this);
     this.model.on('node:update', this.updateNode, this);
+    this.model.on('node:updated', this.updateNode, this);
     this.model.on('node:select', this.updateSelections, this);
     this.model.on('node:move', this.move, this);
     this.model.on('node:moved', this.move, this);
@@ -37,6 +38,16 @@ sc.views.Document = Dance.Performer.extend({
     this.nodes.push(view);
     $(view.render().el).appendTo(this.el);
   },
+
+  updateNode: function(options) {
+    console.log("SHould limit which nodes are updated");
+    _.each(this.nodes, function(node, index) {
+      if(node.model._id == options._id) {
+        node.update();
+      }
+    }, this);
+  },
+
 
   // Incoming move node operation
   move: function(options) {

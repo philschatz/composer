@@ -10,6 +10,17 @@
 
   margin: 0 100px;
   padding: 10px 0;
+  
+}
+
+.content-node.section .content {
+  .CodeMirror {
+    margin: 0px; // .section already sets the margin
+    font-family: inherit !important;
+  }
+  .CodeMirror-scroll {
+    overflow-y: hidden;
+  }
 }
 
 #document h1 {
