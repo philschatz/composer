@@ -105,13 +105,13 @@ var Document = function(document) {
     moved: function(options) {
       // console.log(that.rev);
       //if (checkRev(options.rev)) {
-        var f = that.get(_.first(options.nodes)), // first node of selection
-            l = that.get(_.last(options.nodes)), // last node of selection
-            t = that.get(options.target), // target node
-            fp = f.get('prev'),
-            ln = l.get('next'),
-            tn = t.get('next');
-            tp = t.get('prev')
+        var f = that.get(_.first(options.nodes)); // first node of selection
+        var l = that.get(_.last(options.nodes)); // last node of selection
+        var t = that.get(options.target); // target node
+        var fp = f.get('prev');
+        var ln = l.get('next');
+        var tn = t.get('next');
+        var tp = t.get('prev');
 
         // console.log('before');
         // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());

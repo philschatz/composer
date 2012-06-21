@@ -58,8 +58,8 @@ var DocumentManager = function(server) {
     {"command": "node:inserted",   "params": {"user": "michael", "type": "text", "rev": 10, "attributes": {"content": "The Substance Composer uses atomic operations to transform documents. This is a fundamental concept that allows collaborative editing of one document (even at the same time). The technique behind it is called Operational Transformation. Based on all recorded operations, the complete document history can be reproduced at any time. In other words. This is the best thing since sliced bread."}}},
     {"command": "user:announce", "params": {"user": "john", "color": "#4da6c7"}},
     {"command": "node:select",   "params": {"user": "john", "nodes": ["/cover/1"], "rev": 11}},
-    {"command": "node:select",   "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "rev": 11}},
-    {"command": "node:moved",     "params": {"user": "michael", "nodes": ["/section/2", "/text/3"], "target": "/text/4", "rev": 11}}
+    {"command": "node:select",   "params": {"user": "michael", "nodes": ["/text/3"], "rev": 11}},
+    {"command": "node:moved",     "params": {"user": "michael", "nodes": ["/text/3"], "target": "/text/4", "rev": 11}}
   ];
   this.rev = 11; //0;
   this.locks = {};

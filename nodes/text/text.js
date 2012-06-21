@@ -6,7 +6,7 @@ sc.views.Node.define('/type/text', {
     $(this.textEl).click();
   },
 
-  select: function () {
+  select: function (event) {
     sc.views.Node.prototype.select.apply(this);
   },
 
@@ -29,10 +29,17 @@ sc.views.Node.define('/type/text', {
     var that = this;
     sc.views.Node.prototype.render.apply(this, arguments);
 
+    function newParagraph() {
+      alert("Enter not supported yet but here it will create a new paragraph");
+    }
+
     setTimeout(function() {
       that.editor = CodeMirror(that.contentEl[0], {
         lineWrapping: true,
         value: that.model.get('content'),
+        extraKeys: {
+          'Enter': newParagraph
+        },
         onChange: function() {
           that.model.set({content: that.editor.getValue()});
           if (!that.silent) that.dispatch();

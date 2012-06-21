@@ -53,6 +53,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   // TODO: move to document level ?
   select: function (e) {
     this.document.execute({command:"node:select", params: { nodes: [this.model._id] }});
+    event.stopPropagation();
   },
   
   focus: function () {},
