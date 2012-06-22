@@ -1,6 +1,7 @@
 sc.views.Node.define('/type/section', {
 
   className: 'content-node section',
+  //contentTagName: 'h1',
 
   initialize: function (options) {
     sc.views.Node.prototype.initialize.apply(this, arguments);
@@ -92,6 +93,7 @@ sc.views.Node.define('/type/section', {
         keyMap: {
           'Enter': newParagraph
         },
+        onFocus: function() { that.select(); },
         onChange: function() {
           that.model.set({name: that.editor.getValue()});
           if (!that.silent) that.dispatch();

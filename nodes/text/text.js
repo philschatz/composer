@@ -40,6 +40,7 @@ sc.views.Node.define('/type/text', {
         extraKeys: {
           'Enter': newParagraph
         },
+        onFocus: function() { that.select(); },
         onChange: function() {
           that.model.set({content: that.editor.getValue()});
           if (!that.silent) that.dispatch();
