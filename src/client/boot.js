@@ -19,17 +19,22 @@ $(function() {
     _.each($els, function(el) {
       var $el = $(el);
       var tag = $el.get(0).tagName.toLowerCase();
-      var id = $el.attr('id') || "autoid-" + tag + "/" + nextId++;
+      var id = $el.attr('id') || "autoid-" + tag + "-" + nextId++;
+      $el.attr({id: id}); // Set the id if it didn't exist before
       var node = { type: [ '/type/node' ] };
       if(tag == 'p') {
         node.type.push('/type/text');
         node.content = el.innerHTML;
+        el.innerHTML = '';
       } else if(tag == 'div' && $el.hasClass('section')) {
         node.type.push('/type/section');
-        $title = $el.find("> h2.title");
+        $title = $el.find("> h1.title");
         node.name = $title ? $title.get(0).innerHTML : '[Insert Title]';
         
-        node.children = htmlParser($el.find("> *:not(h2.title)"));
+        // Remove the titles from the DOM
+        $title.remove();
+        
+        node.children = htmlParser($el.find("> *:not(h1.title)"));
         
       } else {
         console.log("skipping element with tag '" + tag + "'");

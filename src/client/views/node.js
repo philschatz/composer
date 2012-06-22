@@ -1,6 +1,7 @@
 sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   className: 'content-node',
+  contentTagName: 'div', // div by default but sections override it for the h# title
 
   attributes: {
     draggable: 'false'
@@ -9,7 +10,15 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   initialize: function (options) {
     this.state  = 'read';
     this.document = options.document;
-    $(this.el).attr({ id: _.htmlId(this.model) });
+    var $existingEl = $('#' + _.htmlId(this.model));
+    if ($existingEl.length) {
+      this.setElement($existingEl, true);
+      // Add all the attributes and classes
+      this.$el.addClass(this.className);
+      this.$el.attr(this.attributes);
+    } else {
+      $(this.el).attr({ id: _.htmlId(this.model) });
+    }
   },
 
   transitionTo: function (state) {
@@ -60,12 +69,14 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   render: function () {
     var that = this;
-    this.contentEl = $('<div class="content"></div>').appendTo(this.el);
+    this.contentEl = $('<'+ this.contentTagName + '/>').addClass('content').appendTo(this.el);
     this.handleEl = $('<div class="handle"></div>').appendTo(this.el);
+
+    this.contentEl.add(this.handleEl).on('click', function() { that.select(); });
 
     // Handle Drag and Drop
     var scope = 'content-node-only';
-    $(this.el).draggable({
+    this.$el.draggable({
       handle: this.handleEl,
       scope: scope,
       revert: "invalid",
@@ -76,7 +87,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
       },
     });
     
-    $(this.el).droppable({
+    this.$el.droppable({
       scope: scope,
       hoverClass: "drop-before",
       drop: function(event, ui) {
