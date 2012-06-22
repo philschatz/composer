@@ -8,6 +8,14 @@ And we've proposed a solution:
 
 > Provide an easy way for communities to build their own editor
 
+Install
+=========
+
+Install node.js ( http://nodejs.org ). Then:
+
+    npm install . # Download the dependencies
+    cat '{"secret":"123","server_host":"localhost","server_port":3000}' > config.json
+    node server.js
 
 The Substance Composer
 =========
