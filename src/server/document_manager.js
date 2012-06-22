@@ -221,6 +221,7 @@ _.extend(DocumentManager.prototype, {
         delete that.sessions[socket.id];
         
         that.io.sockets.emit('user:left', {user: socket.id});
+        that.io.sockets.emit("node:selected", that.locks);
       };
 
 
