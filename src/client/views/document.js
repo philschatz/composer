@@ -52,7 +52,7 @@ sc.views.Document = Dance.Performer.extend({
   // Incoming move node operation
   move: function(options) {
     var $selection = $(_.map(options.nodes, function(n) { return '#'+_.htmlId(n); }).join(', '));
-    $selection.insertAfter($('#'+_.htmlId(options.target)));
+    $selection.insertBefore($('#'+_.htmlId(options.target)));
   },
 
   moved: function(options) {
