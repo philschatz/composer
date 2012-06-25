@@ -12,10 +12,13 @@ $(function() {
   };
   
   var nextId = 0;
-  function htmlParser($els) {
+  
+  // Note: lastLevel is used for computing heading levels (non-zero inside sections)
+  function htmlParser($els, lastLevel) {
     var nodeIds = [];
     var prevNode = null;
     var prevId = null;
+    var lastLevel = 1; // H1 by default
     _.each($els, function(el) {
       var $el = $(el);
       var tag = $el.get(0).tagName.toLowerCase();
@@ -26,15 +29,22 @@ $(function() {
         node.type.push('/type/text');
         node.content = el.innerHTML;
         el.innerHTML = '';
+      } else if (tag == 'h1' || tag == 'h2' || tag == 'h3' || tag == 'h4' || tag == 'h5' || tag == 'h6') {
+        node.type.push('/type/section');
+        node.name = $el[0].innerHTML;
+        var level = tag[1] == '1' ? 1 : tag[1] == '2' ? 2 : tag[1] == '3' ? 3 : 4;
+        node.offset = level - lastLevel;
+        lastLevel = level;
+        
       } else if(tag == 'div' && $el.hasClass('section')) {
         node.type.push('/type/section');
-        $title = $el.find("> h1.title");
+        $title = $el.find("> .title");
         node.name = $title ? $title.get(0).innerHTML : '[Insert Title]';
         
         // Remove the titles from the DOM
         $title.remove();
         
-        node.children = htmlParser($el.find("> *:not(h1.title)"));
+        node.children = htmlParser($el.find("> *:not(.title)"), lastLevel + 1);
         
       } else {
         console.log("skipping element with tag '" + tag + "'");

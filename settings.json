@@ -2,6 +2,7 @@
   "scripts": {
     "development": [
       "jquery.min.js",
+      "jquery.hotkeys.js",
       "jquery-ui.min.js",
       "jquery.transloadit2.js",
       "keymaster.min.js",
@@ -11,10 +12,15 @@
       "leaflet.js",
       "data.js",
       "dance.js",
-      "remotestorage.js"
+      "remotestorage.js",
+      "annotator-full.min.js",
+      "proper/proper.js",
+      "proper/oer.js"
     ],
     "production": [
       "jquery.min.js",
+      "jquery.hotkeys.js",
+      "jquery-ui.min.js",
       "jquery.transloadit2.js",
       "keymaster.min.js",
       "jquery.timeago.js",
@@ -24,7 +30,9 @@
       "underscore.js",
       "data.js",
       "dance.js",
-      "remotestorage.js"
+      "remotestorage.js",
+      "proper/proper.js",
+      "proper/oer.js"
     ],
     "source": [
       "composer.js",

@@ -15,6 +15,11 @@
         "unique": true,
         "type": "string"
       },
+      "offset": {
+        "name": "Level Change",
+        "unique": true,
+        "type": "number"
+      },
       "children": {
         "name": "Children/Contents",
         "unique": false,

@@ -2,9 +2,21 @@
 <html>
   <head>
     <title>Composer</title>
+<style type="text/css">
+#tools {
+  position: fixed;
+  left: 10px;
+  top: 80px;
+  
+  width: 50px;
+  height: 300px;
+}
+</style>
     <link href="/styles.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="/codemirror/codemirror.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="/proper/proper.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/proper/oer.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="annotator.min.css" media="screen" rel="stylesheet" type="text/css" />
     <script>
       var seed = {{{{seed}}}};
       var scripts = {{{{scripts}}}};
@@ -52,21 +64,31 @@
       </div>
     </div>
     
+    <div id="tools"></div>
+    
+    
     <div id="container">
       <p id="unique-id">This is a paragraph element in the HTML document and will be parsed as a node in the editor</p>
       <p>Another paragraph with a link element. For now, inline elements show up as text but will be rendered as a tag in the future. <a href="http://example.com">link</a></p>
       <div class="section">
         <h1 class="title">This is a section with a title (in the HTML document)</h1>
         <div class="section">
-          <h1 class="title">This is a SUBsection with a title</h1>
+          <h2 class="title">This is a SUBsection with a title</h2>
           <p>This is a paragraph in the subsection</p>
         </div>
         <p>This is a paragraph in the section. Elements below will be automatically added by the server</p>
       </div>
+
+      <h2>Heading level 2</h2>
+      <h3>Heading level 3</h3>
+      <h2>Heading level 2</h2>
+      <h1>Heading level 1</h1>
+
     </div>
     
     <div id="footer">
       
     </div>
+    
   </body>
 </html>

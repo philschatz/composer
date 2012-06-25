@@ -2,6 +2,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   className: 'content-node',
   contentTagName: 'div', // div by default but sections override it for the h# title
+  contentClasses: '',
 
   attributes: {
     draggable: 'false'
@@ -10,6 +11,16 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   initialize: function (options) {
     this.state  = 'read';
     this.document = options.document;
+
+    var $existingEl = $('#' + _.htmlId(this.model));
+    if ($existingEl.length) {
+      $existingEl.removeAttr('id');
+      this.contentTagName = $existingEl[0].tagName;
+      this.contentClasses = $existingEl.attr('class') || '';
+    }
+    $(this.el).attr({ id: _.htmlId(this.model) });
+    
+/*
     var $existingEl = $('#' + _.htmlId(this.model));
     if ($existingEl.length) {
       this.setElement($existingEl, true);
@@ -19,6 +30,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     } else {
       $(this.el).attr({ id: _.htmlId(this.model) });
     }
+*/
   },
 
   transitionTo: function (state) {
@@ -67,10 +79,21 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   
   focus: function () {},
 
-  render: function () {
+  _setContentEl: function() {
     var that = this;
-    this.contentEl = $('<'+ this.contentTagName + '/>').addClass('content').appendTo(this.el);
-    this.handleEl = $('<div class="handle"></div>').appendTo(this.el);
+    var contentEl = $('<'+ this.contentTagName + ' class="' + this.contentClasses + '"/>').addClass('content').appendTo(this.el);
+    if (this.contentEl) {
+      this.contentEl.replaceWith(contentEl);
+    } else {
+      this.contentEl = contentEl;
+    }
+    
+    var handleEl = $('<div class="handle"></div>').appendTo(this.el);
+    if (this.handleEl) {
+      this.handleEl.replaceWith(handleEl);
+    } else {
+      this.handleEl = handleEl;
+    }
 
     this.contentEl.add(this.handleEl).on('click', function() { that.select(); });
 
@@ -86,7 +109,16 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
         that.select();
       },
     });
+
+  },
+
+  render: function () {
+    var that = this;
     
+    this._setContentEl();
+    
+    // Handle Drag and Drop
+    var scope = 'content-node-only';
     this.$el.droppable({
       scope: scope,
       hoverClass: "drop-before",
